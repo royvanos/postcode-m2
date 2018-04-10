@@ -73,17 +73,88 @@ class LayoutProcessor extends AbstractBlock implements LayoutProcessorInterface
 
         $shippingFields['postcode_fieldset'] = $this->getFieldArray('shippingAddress', 'shipping');
 
+        $shippingFields['street'] = $this->addSeparateLabels('shippingAddress');
+
         $shippingFields = $this->changeFieldPosition($shippingFields);
 
         $result['components']['checkout']['children']['steps']['children']
             ['shipping-step']['children']['shippingAddress']['children']
             ['shipping-address-fieldset']['children'] = $shippingFields;
 
-
-
         $result = $this->getBillingFormFields($result);
 
         return $result;
+    }
+
+    /**
+     * Add separate labels to a specified scope
+     *
+     * @param $customScope
+     * @param null $dataScope
+     * @return array
+     */
+    public function addSeparateLabels($customScope, $dataScope = null)
+    {
+        if ($dataScope === null) {
+            $dataScope = $customScope . '.street';
+        }
+
+        return [
+            'component' => 'Magento_Ui/js/form/components/group',
+            'label' => null,
+            'required' => false,
+            'additionalClasses' => 'separated-address-fieldset',
+            'dataScope' => $dataScope,
+            'provider' => 'checkoutProvider',
+            'sortOrder' => 70,
+            'type' => 'group',
+            'children' => [
+                [
+                    'component' => 'Magento_Ui/js/form/element/abstract',
+                    'config' => [
+                        'customScope' => $customScope,
+                        'template' => 'ui/form/field',
+                        'elementTmpl' => 'ui/form/element/input'
+                    ],
+                    'dataScope' => '0',
+                    'provider' => 'checkoutProvider',
+                    'validation' => array(
+                        'required-entry' => true
+                    ),
+                    'additionalClasses' => 'separated-address-street',
+                    'label' => __('Street')
+                ],
+                [
+                    'component' => 'Magento_Ui/js/form/element/abstract',
+                    'config' => [
+                        'customScope' => $customScope,
+                        'template' => 'ui/form/field',
+                        'elementTmpl' => 'ui/form/element/input'
+                    ],
+                    'dataScope' => '1',
+                    'provider' => 'checkoutProvider',
+                    'validation' => array(
+                        'required-entry' => true,
+                        'validate-number' => true
+                    ),
+                    'additionalClasses' => 'separated-address-number',
+                    'label' => __('Housenumber')
+                ],
+                [
+                    'component' => 'Magento_Ui/js/form/element/abstract',
+                    'config' => [
+                        'customScope' => $customScope,
+                        'template' => 'ui/form/field',
+                        'elementTmpl' => 'ui/form/element/input'
+                    ],
+                    'dataScope' => '2',
+                    'provider' => 'checkoutProvider',
+                    'validation' => true,
+                    'additionalClasses' => 'separated-address-extension',
+                    'label' => __('Housenumber addition')
+                ]
+            ]
+        ];
     }
 
     /**
@@ -173,8 +244,9 @@ class LayoutProcessor extends AbstractBlock implements LayoutProcessorInterface
 
                 $billingFields['postcode_fieldset'] = $this->getFieldArray('billingAddress' . $paymentMethodCode, 'billing');
 
-                $billingFields = $this->changeFieldPosition($billingFields);
+                $billingFields['street'] = $this->addSeparateLabels('billingAddress' . $paymentMethodCode);
 
+                $billingFields = $this->changeFieldPosition($billingFields);
 
                 $result['components']['checkout']['children']['steps']['children']['billing-step']
                 ['children']['payment']['children']['payments-list']['children'][$paymentMethodCode . '-form']

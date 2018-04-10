@@ -3,11 +3,68 @@
 //  _____________________________________________
 
 & when (@media-common = true) {
-    .street-field-set {
-        display: none !important;
-    }
-
     .street-field-set-show {
         display: block !important;
+    }
+
+    .separated-address {
+        &-fieldset {
+            legend.label {
+                display: none !important;
+            }
+
+            label.label {
+                display: inline-block;
+                .lib-css(margin, @form-field-type-label-block__margin);
+            }
+
+            .field._required {
+                label.label:after {
+                    content: '*';
+                    .lib-typography(
+                        @_color: @form-field-label-asterisk__color,
+                        @_font-size: @form-field-label-asterisk__font-size,
+                        @_font-family: @form-field-label-asterisk__font-family,
+                        @_font-weight: @form-field-label-asterisk__font-weight,
+                        @_font-style: @form-field-label-asterisk__font-style,
+                        @_line-height: @form-field-label-asterisk__line-height
+                    );
+                    .lib-css(margin, @form-field-label-asterisk__margin);
+                }
+            }
+        }
+
+        &-street {
+            .lib-form-field();
+        }
+
+        &-number,
+        &-extension {
+            width: 50%;
+
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        &-number {
+            float: left;
+            .lib-css(padding, 0 8px 0 0);
+        }
+
+        &-extension {
+            float: right;
+            .lib-css(padding, 0 0 0 8px);
+        }
+    }
+
+    .billing-address-form {
+        .separated-address {
+            &-fieldset {
+                label.label {
+                    font-weight: 600;
+                }
+            }
+        }
     }
 }
